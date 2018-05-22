@@ -9,12 +9,16 @@
 只有顺序无关的数据才用dictionary存储，其他都用list。
 
 
-INPUT : XML_FilePath
-OUTPUT : stuctured_score (type:list)
+>>> INPUT : XML_FilePath
+>>> OUTPUT : stuctured_score (type:list)
 '''
 
 import xml.etree.ElementTree as ET
 
+'''
+in ET, We use "element.iter(tag=tagName)" to read the sub-element
+Since XML is a nested structure, we need to call .iter() recursively
+'''
 def ReadValue(element,tagName):
     value = []
     for subelem in element.iter(tag=tagName):
@@ -23,13 +27,12 @@ def ReadValue(element,tagName):
                            # if not 1, there must be some logical error
     #print(value)
     if (len(value)==1):
-        #print(type(value[0]))
         return value[0]
     else:
         return ''
 
-
-def ReadAtrribute(attr):
+#  (Read Atrribute) & (Read Note) is for reading Attr & Note in measures
+def ReadAtrribute(attr):  
     info = {}
 
     cnt = 0
@@ -62,7 +65,7 @@ def ReadAtrribute(attr):
     #print(info)
     return info
 
-
+#  (Read Atrribute) & (Read Note) is for reading Attr & Note in measures
 def ReadNote(note):
     NoteDic = {}
 
@@ -80,7 +83,7 @@ def ReadNote(note):
     #print(NoteDic)
     return NoteDic
 
-
+# Read Measure calls (Read Atrribute) & (Read Note) 
 def ReadMeasure(measure):
     measure_num = int(measure.attrib['number'])
     info_list = []
@@ -104,15 +107,29 @@ def ReadScore(root):
         part_list.append(measure_list)
     return part_list
 
+'''
+这是真正被外部用到的函数：ReadXML
+input：FilePath
+output：score （list）
 
+它将XML装入内存解析为一棵ElementTree。
+然后将root传给子函数去解析。
+'''
 def ReadXML(FilePath):
     print('Start Read File :'+FilePath)
     tree = ET.ElementTree(file=FilePath)
     root = tree.getroot()
     score = ReadScore(root)
     return score
-
-
+'''
+score这个list里, 每个元素是一个part（一般的乐谱只有1个part）
+每个part（list）内有多个measure（list），也就是乐谱上的一个小节。
+measure[0]、measure[1]、measure[2]分别对应：小节#编号、当前小节的info、小节内的音符
+!!! -->通常，第一小节的info信息是重要的，它会有'key-mode'、'time-beats'、'time-beat-type'等信息
+    -->其后的小节，这些信息如果没有变化，就不再重复给出。
+type(info) = dict
+type(note) = dict, 但我们把同一小节里的 notes 存在一个 list 里，以确保它们依然有序。
+'''
 
 if __name__ == '__main__':
     #pass
