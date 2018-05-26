@@ -55,12 +55,14 @@ def ReadAtrribute(attr):
         info['time-beat-type'] = ReadValue(time,'beat-type')
         cnt += 1
 
-    cnt = 0
+    clef_list = []
     for clef in attr.iter(tag='clef'):
-        assert(cnt==0)
-        info['clef-sign'] = ReadValue(clef,'sign')
-        info['clef-line'] = ReadValue(clef,'line')
-        cnt += 1
+        clef_entry = {}
+        #clef_entry['number'] = int(clef.attrib['number'])    #some XML dont have this attrib
+        clef_entry['sign'] = ReadValue(clef,'sign')
+        clef_entry['line'] = ReadValue(clef,'line')
+        clef_list.append(clef_entry)
+    info['clef'] = clef_list    
 
     #print(info)
     return info
@@ -133,7 +135,13 @@ type(note) = dict, 但我们把同一小节里的 notes 存在一个 list 里，
 
 if __name__ == '__main__':
     #pass
-    FileName = 'test2.xml'
+
+    FileName = input("Enter your MusicXML File name (default 'test.xml')");
+    if FileName:
+        if FileName[len(FileName)-4:] != '.xml':
+            FileName = FileName + '.xml'
+    else:
+        FileName = 'test.xml'
     score = ReadXML(FileName)
     print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
     for part in score:
