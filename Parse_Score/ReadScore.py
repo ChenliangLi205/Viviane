@@ -148,5 +148,8 @@ if __name__ == '__main__':
         for measure in part:
             print(measure[0])
             print(measure[1])
-            print(measure[2])
             print('----------------------')
+            for node in measure[2]:
+                print(node)
+            #print(measure[2])
+            print('++++++++++++++++++++++++++++++++++++++++++++++++')
