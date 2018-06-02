@@ -25,4 +25,4 @@ to parse a musicXML file, we extract these elements：
 				* octave
 			* duration
 			* type
-			* stem
+			* chord
