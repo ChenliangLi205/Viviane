@@ -71,7 +71,7 @@ def ReadAtrribute(attr):
 def ReadNote(note):
     NoteDic = {}
 
-    cnt = 0
+    cnt = 0 
     for pitch in note.iter(tag='pitch'):
         assert(cnt==0)
         NoteDic['pitch-step'] = ReadValue(pitch,'step')
@@ -80,8 +80,10 @@ def ReadNote(note):
         cnt += 1
     NoteDic['duration'] = ReadValue(note,'duration')
     NoteDic['type'] = ReadValue(note,'type')
-    NoteDic['stem'] = ReadValue(note,'stem')
-
+    NoteDic['chord'] = False
+    for _ in note.iter(tag='chord'):
+        NoteDic['chord'] = True
+    #NoteDic['stem'] = ReadValue(note,'stem')
     #print(NoteDic)
     return NoteDic
 
@@ -138,7 +140,7 @@ if __name__ == '__main__':
 
     FileName = input("Enter your MusicXML File name (default 'test.xml')");
     if FileName:
-        if FileName[len(FileName)-4:] != '.xml':
+        if FileName[-4:] != '.xml':
             FileName = FileName + '.xml'
     else:
         FileName = 'test.xml'
