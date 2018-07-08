@@ -120,6 +120,7 @@ output：score （list）
 然后将root传给子函数去解析。
 '''
 def ReadXML(FilePath):
+    '''read musicXML file and output a list-type score'''
     print('Start Read File :'+FilePath)
     tree = ET.ElementTree(file=FilePath)
     root = tree.getroot()
