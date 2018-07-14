@@ -23,14 +23,15 @@ def xml2notes(path):
     score = ReadXML(path)
     part = score[0]
     for measure in part:
+        attrs_measure = measure[1] # 音节的各种属性
         notes_measure = measure[2] # 音节里所有的单音
         if len(notes_measure): # 音节不为空
-            this_note = ''
             for note_dict in notes_measure: # 单音
                 if 'pitch-step' in note_dict.keys(): # 含有音符信息
                     this_note = note_dict['pitch-step'] + note_dict['pitch-octave'] + note_dict['pitch-alter']
                     notes.append((this_note, int(note_dict['duration'])))
                 else:
+                    assert this_note
                     notes.append((this_note, int(note_dict['duration'])))
     return notes
 
@@ -40,7 +41,6 @@ def notes2classes(notes):
     :param notes: xml2notes的输出
     :return: 一个 1d list，就是把A3这种音符换成了数字表示的标签
     """
-    print(notes)
     return list(map(note2class, notes))
 
 
@@ -52,6 +52,6 @@ def note2class(note):
     return NOTE_LIST.index(note[0]), note[1]
 
 if __name__ == '__main__':
-    f = 'Data/Piano/003.xml'
+    f = 'Data/Piano/004.xml'
     print(notes2classes(xml2notes(f)))
 

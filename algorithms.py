@@ -8,9 +8,9 @@ import numpy as np
 class Network(torch.nn.Module):
     def __init__(self, in_num, hidden_layers, out_num):
         """
-        :param in_num: int, neural number of the input layer
-        :param hidden_layers: int or list of int, neural number of the hidden layers
-        :param out_num:
+        :param in_num: int, 输入层神经元个数
+        :param hidden_layers: int or list of int, 隐层神经元个数
+        :param out_num: 输出层神经元个数
         """
         super(Network, self).__init__()
         if isinstance(hidden_layers, int): # 单层
