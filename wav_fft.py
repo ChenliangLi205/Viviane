@@ -3,27 +3,6 @@ import numpy as np
 import wave
 
 
-def show(ori_func, rate):
-    n = len(ori_func)
-    interval = 1. / rate
-    ft = np.fft.fft(ori_func)
-
-    # 绘制原始函数
-    plt.subplot(2, 1, 1) 
-    plt.plot(np.arange(0, n) * interval, ori_func, color='black')
-    plt.xlabel('Time'), plt.ylabel('Amplitude')
-
-    # 绘制变换后的函数
-    plt.subplot(2, 1, 2)
-    frequency = np.arange(n / 2) / (n * interval)
-    nfft = abs(ft[range(int(n / 2))] / n)
-    print(len(nfft))
-    plt.plot(frequency, nfft, color='red')
-    plt.xlabel('Freq (Hz)'), plt.ylabel('Amp. Spectrum')
-
-    plt.show()
-
-
 def readwav(path):
     # 读wav文件，返回波形数据（1维数组）和帧率（整数）
     with wave.open(path, 'rb') as f:
@@ -51,8 +30,33 @@ def segment(data, span=4000):
     return complete.reshape(-1, span)
 
 
+def fft(ori_func, rate):
+    # 传入波形数据（1维数组）和帧率（整数），进行傅里叶变换处理
+    # 返回的frequency为频谱图的x值的序列，nfft为y值的序列，两者一一对应，均为1维数组
+    # 传入的rate参数对于傅里叶变换的计算是无关的，只是决定了nfft的每个值对应的频率（即确定x轴的单位长度）
+    n = len(ori_func)
+    ft = np.fft.fft(ori_func)
+    nfft = abs(ft[range(int(n / 2))] / n)
+    frequency = np.arange(n / 2) / (n / rate)
+    return nfft, frequency
+
+
 if __name__ == '__main__':
     wavdata, wavrate = readwav(r'28-C.wav')
     seg = segment(wavdata)
-    show(seg[0], wavrate)
-    show(seg[1], wavrate)
+
+    m = len(seg)
+    for i in range(m):
+        x = seg[i]
+        interval = 1. / wavrate
+
+        plt.subplot(m, 2, 2 * i + 1)
+        plt.plot(np.arange(0, len(x)) * interval, x, color='black')
+        plt.xlabel('Time'), plt.ylabel('Amplitude')
+
+        plt.subplot(m, 2, 2 * i + 2)
+        spec, freq = fft(x, wavrate)
+        plt.plot(freq, spec, color='red')
+        plt.xlabel('Freq (Hz)'), plt.ylabel('Amp. Spectrum')
+
+    plt.show()
